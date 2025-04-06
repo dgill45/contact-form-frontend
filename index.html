@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Contact Us</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; }
+    input, textarea { width: 100%; margin-bottom: 1em; padding: 0.5em; }
+    button { padding: 0.75em 1.5em; }
+  </style>
+</head>
+<body>
+
+  <h1>Contact Us</h1>
+
+  <form id="contact-form">
+    <input type="text" id="name" placeholder="Your name" required />
+    <input type="email" id="email" placeholder="Your email" required />
+    <textarea id="message" rows="5" placeholder="Your message" required></textarea>
+    <button type="submit">Send</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    const form = document.getElementById('contact-form');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        message: document.getElementById('message').value
+      };
+
+      try {
+        const res = await fetch('https://i0c7k5b731.execute-api.us-east-1.amazonaws.com/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const json = await res.json();
+
+        if (res.ok) {
+          result.innerHTML = `<p style="color:green;">${json.message}</p>`;
+          form.reset();
+        } else {
+          result.innerHTML = `<p style="color:red;">${json.error || 'Something went wrong.'}</p>`;
+        }
+
+      } catch (err) {
+        result.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+      }
+    });
+  </script>
+
+</body>
+</html>
